@@ -16,8 +16,8 @@ provider "okta" {
 }
 
 resource "okta_user" "test" {
-  first_name           = "Terraform"
-  last_name            = "Test"
-  login                = "terraform.test@gmail.com"
-  email                = "terraform.test@gmail.com"
+  first_name = "Terraform"
+  last_name  = "Test"
+  login      = "terraform.test@gmail.com"
+  email      = "terraform.test@gmail.com"
 }
