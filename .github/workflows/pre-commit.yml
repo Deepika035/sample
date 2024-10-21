@@ -27,9 +27,6 @@ jobs:
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
         shell: bash
 
-      # Update PATH for TFLint
-      - name: Update PATH for TFLint
-        run: echo "/usr/local/bin" >> $GITHUB_ENV
 
       # Install terraform-docs
       - name: Install terraform-docs
