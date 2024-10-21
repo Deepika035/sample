@@ -8,14 +8,14 @@ on:
 
 jobs:
   precommit:
-    runs-on: ubuntu-latest   # You can use windows-latest if needed
+    runs-on: ubuntu-latest   # Use 'windows-latest' if you need a Windows environment
     
     steps:
       # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Install dependencies
+      # Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -25,8 +25,11 @@ jobs:
       - name: Install TFLint
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-          echo "/usr/local/bin" >> $GITHUB_ENV  # Correctly set PATH for future steps
         shell: bash
+
+      # Update PATH for TFLint
+      - name: Update PATH for TFLint
+        run: echo "/usr/local/bin" >> $GITHUB_ENV
 
       # Install terraform-docs
       - name: Install terraform-docs
@@ -44,8 +47,7 @@ jobs:
 
       # Run pre-commit hooks
       - name: Run pre-commit
-        run: |
-          pre-commit run --all-files
+        run: pre-commit run --all-files
 
 
 
