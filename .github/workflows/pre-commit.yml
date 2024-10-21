@@ -31,6 +31,13 @@ jobs:
       run: |
         curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
+    - name: Install Terraform Docs
+      run: |
+        curl -Lo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
+        tar -xzf terraform-docs.tar.gz
+        chmod +x terraform-docs
+        sudo mv terraform-docs /usr/local/bin/
+
     - name: Run Pre-commit Hooks
       run: pre-commit run --all-files
 
@@ -46,8 +53,3 @@ jobs:
     - name: Terraform Plan
       run: terraform plan ./terraform
 
-    - name: Terraform Validate
-      run: terraform validate
-
-    - name: Terraform Plan
-      run: terraform plan
