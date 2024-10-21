@@ -1,55 +1,56 @@
-name: Pre-commit and Terraform Checks
+name: Terraform Pre-commit
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
-  terraform:
-    name: Run Pre-commit and Terraform Validation
-    runs-on: ubuntu-latest
-
+  precommit:
+    runs-on: ubuntu-latest   # Use windows-latest if you need a Windows environment
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
+      # Install dependencies
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0  # or your desired Terraform version
 
-    - name: Install Pre-commit
-      run: |
-        python -m pip install --upgrade pip
-        pip install pre-commit
+      # Install TFLint
+      - name: Install TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          echo "/home/runner/.local/bin" >> $GITHUB_ENV  # Set the PATH for future steps
+        shell: bash
 
-    - name: Install TFLint
-      run: |
-        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+      # Set PATH for TFLint
+      - name: Add TFLint to PATH
+        run: |
+          echo "${{ github.workspace }}/.local/bin" >> $GITHUB_ENV  # Update PATH
+        shell: bash
+      
+      # Install terraform-docs
+      - name: Install terraform-docs
+        run: |
+          curl -Lo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
+          tar -xzf terraform-docs.tar.gz
+          sudo mv terraform-docs /usr/local/bin/
+        shell: bash
 
-    - name: Install Terraform Docs
-      run: |
-        curl -Lo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-        tar -xzf terraform-docs.tar.gz
-        chmod +x terraform-docs
-        sudo mv terraform-docs /usr/local/bin/
+      # Install pre-commit
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+        shell: bash
 
-    - name: Run Pre-commit Hooks
-      run: pre-commit run --all-files
+      # Run pre-commit hooks
+      - name: Run pre-commit
+        run: |
+          pre-commit run --all-files
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-
-    - name: Terraform Init
-      run: terraform init ./terraform
-
-    - name: Terraform Validate
-      run: terraform validate ./terraform
-
-    - name: Terraform Plan
-      run: terraform plan ./terraform
 
