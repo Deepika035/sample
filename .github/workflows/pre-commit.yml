@@ -8,7 +8,7 @@ on:
 
 jobs:
   precommit:
-    runs-on: ubuntu-latest   # Use windows-latest if you need a Windows environment
+    runs-on: ubuntu-latest   # You can use windows-latest if needed
     
     steps:
       # Checkout the code
@@ -19,21 +19,15 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0  # or your desired Terraform version
+          terraform_version: 1.5.0  # Specify your desired Terraform version
 
       # Install TFLint
       - name: Install TFLint
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-          echo "/home/runner/.local/bin" >> $GITHUB_ENV  # Set the PATH for future steps
+          echo "/usr/local/bin" >> $GITHUB_ENV  # Correctly set PATH for future steps
         shell: bash
 
-      # Set PATH for TFLint
-      - name: Add TFLint to PATH
-        run: |
-          echo "${{ github.workspace }}/.local/bin" >> $GITHUB_ENV  # Update PATH
-        shell: bash
-      
       # Install terraform-docs
       - name: Install terraform-docs
         run: |
@@ -52,5 +46,6 @@ jobs:
       - name: Run pre-commit
         run: |
           pre-commit run --all-files
+
 
 
