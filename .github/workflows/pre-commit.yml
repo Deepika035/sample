@@ -27,6 +27,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install pre-commit
 
+    - name: Install TFLint
+      run: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
     - name: Run Pre-commit Hooks
       run: pre-commit run --all-files
 
@@ -34,7 +38,13 @@ jobs:
       uses: hashicorp/setup-terraform@v2
 
     - name: Terraform Init
-      run: terraform init
+      run: terraform init ./terraform
+
+    - name: Terraform Validate
+      run: terraform validate ./terraform
+
+    - name: Terraform Plan
+      run: terraform plan ./terraform
 
     - name: Terraform Validate
       run: terraform validate
